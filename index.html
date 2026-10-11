@@ -87,7 +87,7 @@
     // Supabase の初期化設定
     const SUPABASE_URL = 'https://qudzriiphxhbihllhezn.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_1d8nwHhBQHmqgd-fLZ8KMw_2ILSUb2W';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // 投稿一覧を取得して表示する関数
     async function fetchAndRenderPosts() {
@@ -95,7 +95,7 @@
       postList.innerHTML = "<p>読み込み中...</p>";
 
       // Supabase から投稿一覧を取得（新しい順）
-      const { data: posts, error } = await supabase
+      const { data: posts, error } = await sb
         .from('posts')
         .select('*')
         .order('created_at', { ascending: false });
@@ -150,7 +150,7 @@
       submitBtn.textContent = "送信中...";
 
       // Supabase に新規投稿データを挿入
-      const { error } = await supabase
+      const { error } = await sb
         .from('posts')
         .insert([{ name, text }]);
 
