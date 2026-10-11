@@ -52,7 +52,16 @@
       font-size: 14px;
       white-space: pre-wrap;
     }
+    .post-date {
+      font-size: 11px;
+      color: #888;
+      font-weight: normal;
+      margin-left: 8px;
+    }
   </style>
+
+  <!-- Supabase JS SDK (v2) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <h1>おめでとうっ表示できた！🎉</h1>
@@ -66,7 +75,7 @@
     <form class="board-form" id="boardForm">
       <input type="text" id="nickname" placeholder="ニックネーム" required>
       <textarea id="comment" placeholder="ご意見を入力してください" required></textarea>
-      <button type="submit">送信する</button>
+      <button type="submit" id="submitBtn">送信する</button>
     </form>
 
     <h3>これまでの書き込み</h3>
@@ -75,62 +84,92 @@
   </footer>
 
   <script>
-    // サンプル初期データ
-    const initialPosts = [
-      { name: "管理者", text: "ご意見掲示板を開設しました！" }
-    ];
+    // Supabase の初期化設定
+    const SUPABASE_URL = 'https://qudzriiphxhbihllhezn.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_1d8nwHhBQHmqgd-fLZ8KMw_2ILSUb2W';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ローカルストレージから取得
-    function getPosts() {
-      const saved = localStorage.getItem("simple_board_posts");
-      return saved ? JSON.parse(saved) : initialPosts;
-    }
-
-    // 投稿一覧を表示
-    function renderPosts() {
+    // 投稿一覧を取得して表示する関数
+    async function fetchAndRenderPosts() {
       const postList = document.getElementById("postList");
-      const posts = getPosts();
-      
-      postList.innerHTML = posts.map(post => `
-        <div class="post-item">
-          <div class="post-header">${escapeHtml(post.name)}</div>
-          <div class="post-text">${escapeHtml(post.text)}</div>
-        </div>
-      `).join("");
+      postList.innerHTML = "<p>読み込み中...</p>";
+
+      // Supabase から投稿一覧を取得（新しい順）
+      const { data: posts, error } = await supabase
+        .from('posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('取得エラー:', error);
+        postList.innerHTML = "<p>データの取得に失敗しました。</p>";
+        return;
+      }
+
+      if (!posts || posts.length === 0) {
+        postList.innerHTML = "<p>まだ投稿がありません。</p>";
+        return;
+      }
+
+      // HTML に描画
+      postList.innerHTML = posts.map(post => {
+        const date = new Date(post.created_at).toLocaleString('ja-JP');
+        return `
+          <div class="post-item">
+            <div class="post-header">
+              ${escapeHtml(post.name)}
+              <span class="post-date">${date}</span>
+            </div>
+            <div class="post-text">${escapeHtml(post.text)}</div>
+          </div>
+        `;
+      }).join("");
     }
 
-    // 安全のためエスケープ処理
+    // エスケープ処理
     function escapeHtml(str) {
       return str.replace(/[&<>"']/g, m => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
       }[m]));
     }
 
-    // フォーム送信処理
-    document.getElementById("boardForm").addEventListener("submit", function(e) {
+    // フォーム送信処理（Supabase に保存）
+    document.getElementById("boardForm").addEventListener("submit", async function(e) {
       e.preventDefault();
       
       const nameInput = document.getElementById("nickname");
       const textInput = document.getElementById("comment");
+      const submitBtn = document.getElementById("submitBtn");
       
       const name = nameInput.value.trim();
       const text = textInput.value.trim();
       
       if (!name || !text) return;
 
-      const posts = getPosts();
-      posts.unshift({ name, text }); // 新しい投稿を先頭に追加
+      submitBtn.disabled = true;
+      submitBtn.textContent = "送信中...";
 
-      localStorage.setItem("simple_board_posts", JSON.stringify(posts));
+      // Supabase に新規投稿データを挿入
+      const { error } = await supabase
+        .from('posts')
+        .insert([{ name, text }]);
 
-      // 入力欄リセットと再描画
-      nameInput.value = "";
-      textInput.value = "";
-      renderPosts();
+      if (error) {
+        console.error('送信エラー:', error);
+        alert('投稿に失敗しました。');
+      } else {
+        // 成功したらフォームを空にして再描画
+        nameInput.value = "";
+        textInput.value = "";
+        await fetchAndRenderPosts();
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = "送信する";
     });
 
     // 初期表示
-    renderPosts();
+    fetchAndRenderPosts();
   </script>
 </body>
 </html>
