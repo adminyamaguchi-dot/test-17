@@ -3,9 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <title>テストページ</title>
+  <style>
+    /* 掲示板用のシンプルスタイル */
+    footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 2px solid #ccc;
+    }
+    .board-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+    .board-form input,
+    .board-form textarea {
+      padding: 8px;
+      font-size: 14px;
+    }
+    .board-form textarea {
+      height: 80px;
+      resize: vertical;
+    }
+    .board-form button {
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .post-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 500px;
+    }
+    .post-item {
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 4px;
+      background: #f9f9f9;
+    }
+    .post-header {
+      font-weight: bold;
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    .post-text {
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
   <h1>おめでとうっ表示できた！🎉</h1>
   <p>HTMLが正常に動いています。</p>
+
+  <!-- フッター領域 -->
+  <footer>
+    <h2>ご意見掲示板</h2>
+    
+    <!-- 投稿フォーム -->
+    <form class="board-form" id="boardForm">
+      <input type="text" id="nickname" placeholder="ニックネーム" required>
+      <textarea id="comment" placeholder="ご意見を入力してください" required></textarea>
+      <button type="submit">送信する</button>
+    </form>
+
+    <h3>これまでの書き込み</h3>
+    <!-- 投稿一覧 -->
+    <div class="post-list" id="postList"></div>
+  </footer>
+
+  <script>
+    // サンプル初期データ
+    const initialPosts = [
+      { name: "管理者", text: "ご意見掲示板を開設しました！" }
+    ];
+
+    // ローカルストレージから取得
+    function getPosts() {
+      const saved = localStorage.getItem("simple_board_posts");
+      return saved ? JSON.parse(saved) : initialPosts;
+    }
+
+    // 投稿一覧を表示
+    function renderPosts() {
+      const postList = document.getElementById("postList");
+      const posts = getPosts();
+      
+      postList.innerHTML = posts.map(post => `
+        <div class="post-item">
+          <div class="post-header">${escapeHtml(post.name)}</div>
+          <div class="post-text">${escapeHtml(post.text)}</div>
+        </div>
+      `).join("");
+    }
+
+    // 安全のためエスケープ処理
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      }[m]));
+    }
+
+    // フォーム送信処理
+    document.getElementById("boardForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      
+      const nameInput = document.getElementById("nickname");
+      const textInput = document.getElementById("comment");
+      
+      const name = nameInput.value.trim();
+      const text = textInput.value.trim();
+      
+      if (!name || !text) return;
+
+      const posts = getPosts();
+      posts.unshift({ name, text }); // 新しい投稿を先頭に追加
+
+      localStorage.setItem("simple_board_posts", JSON.stringify(posts));
+
+      // 入力欄リセットと再描画
+      nameInput.value = "";
+      textInput.value = "";
+      renderPosts();
+    });
+
+    // 初期表示
+    renderPosts();
+  </script>
 </body>
 </html>
