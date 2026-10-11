@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIYAZAKI GOURMET GRAM</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --insta-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  --insta-pink: #e1306c;
+  --bg-main: #fafafa;
+  --bg-card: #ffffff;
+  --text-primary: #262626;
+  --text-secondary: #8e8e8e;
+  --border: #dbdbdb;
+  --radius-card: 12px;
+  --font-base: 'Zen Kaku Gothic New', sans-serif;
+  --font-en: 'Plus Jakarta Sans', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-base);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Header / App Bar --- */
+header {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  padding: 12px 16px;
+}
+
+.header-inner {
+  max-width: 935px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: var(--font-en);
+  font-weight: 800;
+  font-size: 20px;
+  background: var(--insta-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.search-box {
+  position: relative;
+  width: 220px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 8px 12px 8px 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #efefef;
+  font-size: 13px;
+  outline: none;
+  font-family: var(--font-base);
+}
+
+.search-box input:focus {
+  background: #ffffff;
+  border-color: #a8a8a8;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* --- Stories (Categories) --- */
+.stories-container {
+  max-width: 935px;
+  margin: 16px auto 24px;
+  padding: 0 16px;
+}
+
+.stories-scroll {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+.stories-scroll::-webkit-scrollbar { display: none; }
+
+.story-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.story-ring {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  padding: 2px;
+  background: #e0e0e0;
+  transition: background 0.3s;
+}
+
+.story-item.active .story-ring {
+  background: var(--insta-gradient);
+}
+
+.story-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  overflow: hidden;
+}
+
+.story-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-label {
+  font-size: 11px;
+  color: var(--text-primary);
+  font-weight: 500;
+  max-width: 70px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Main Feed --- */
+main {
+  max-width: 935px;
+  margin: 0 auto 60px;
+  padding: 0 16px;
+}
+
+.feed-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* --- Post Card --- */
+.post-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+}
+
+.post-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--insta-gradient);
+  padding: 1.5px;
+}
+
+.user-badge-inner {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.location-name {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.post-img-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #eee;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.post-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.post-card:hover .post-img-wrap img {
+  transform: scale(1.03);
+}
+
+.post-actions {
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-btns {
+  display: flex;
+  gap: 12px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--text-primary);
+  transition: transform 0.1s;
+}
+
+.icon-btn:active {
+  transform: scale(1.2);
+}
+
+.icon-btn.liked {
+  color: var(--insta-pink);
+}
+
+.post-body {
+  padding: 0 12px 12px;
+  font-size: 13px;
+}
+
+.likes-count {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.caption {
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.comments-link {
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* --- Modal --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: #ffffff;
+  width: 100%;
+  max-width: 850px;
+  max-height: 90vh;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.modal-left {
+  flex: 1.2;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-left img {
+  width: 100%;
+  height: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.modal-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background: #fff;
+}
+
+.modal-user-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-desc {
+  padding: 16px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  flex-grow: 1;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-info-list {
+  padding: 12px 0;
+  font-size: 12px;
+  display: grid;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.modal-map-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: #0095f6;
+  color: #ffffff;
+  text-align: center;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: #fff;
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+/* Responsive */
+@media(max-width: 768px) {
+  .feed-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .modal-content { flex-direction: column; max-height: 90vh; overflow-y: auto; }
+  .modal-left { height: 280px; }
+  .modal-close { color: var(--text-primary); }
+}
+
+@media(max-width: 480px) {
+  .feed-grid { grid-template-columns: 1fr; }
+  .search-box { width: 140px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">MiyazakiGourmet</div>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input id="search" placeholder="検索">
+    </div>
+  </div>
+</header>
+
+<div class="stories-container">
+  <div class="stories-scroll">
+    <button class="story-item active" data-cat="all">
+      <div class="story-ring">
+        <div class="story-avatar">🍴</div>
+      </div>
+      <span class="story-label">すべて</span>
+    </button>
+    <button class="story-item" data-cat="チキン南蛮">
+      <div class="story-ring">
+        <div class="story-avatar"><img src="https://upload.wikimedia.org/wikipedia/commons/e/eb/Chicken_nanban_001.jpg" alt="チキン南蛮"></div>
+      </div>
+      <span class="story-label">チキン南蛮</span>
+    </button>
+    <button class="story-item" data-cat="地鶏">
+      <div class="story-ring">
+        <div class="story-avatar"><img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Miyazaki_jidori_sumibiyaki.jpg" alt="地鶏炭火焼"></div>
+      </div>
+      <span class="story-label">地鶏炭火焼</span>
+    </button>
+    <button class="story-item" data-cat="宮崎牛">
+      <div class="story-ring">
+        <div class="story-avatar"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Miyazaki_wagyu_beef_steak.jpg" alt="宮崎牛"></div>
+      </div>
+      <span class="story-label">宮崎牛</span>
+    </button>
+    <button class="story-item" data-cat="カフェ">
+      <div class="story-ring">
+        <div class="story-avatar"><img src="https://upload.wikimedia.org/wikipedia/commons/1/13/Miyazaki_mango_parfait.jpg" alt="カフェ・パフェ"></div>
+      </div>
+      <span class="story-label">カフェ・スイーツ</span>
+    </button>
+  </div>
+</div>
+
+<main>
+  <div class="feed-grid" id="shopList"></div>
+</main>
+
+<!-- Modal -->
+<button class="modal-close" id="modalClose" style="display:none;">✕</button>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-content">
+    <div class="modal-left">
+      <img id="modalImg" src="" alt="">
+    </div>
+    <div class="modal-right">
+      <div class="modal-user-header">
+        <div class="user-badge">
+          <div class="user-badge-inner">📍</div>
+        </div>
+        <div>
+          <div class="username" id="modalTitle"></div>
+          <div class="location-name" id="modalArea"></div>
+        </div>
+      </div>
+      
+      <div class="modal-desc" id="modalDesc"></div>
+      
+      <div class="modal-info-list">
+        <div><strong>カテゴリー:</strong> <span id="modalCat"></span></div>
+        <div><strong>おすすめ名物:</strong> <span id="modalFood"></span></div>
+        <div><strong>予算:</strong> <span id="modalPrice"></span></div>
+        <div><strong>営業時間:</strong> <span id="modalHours"></span></div>
+      </div>
+      
+      <a class="modal-map-btn" id="modalMapBtn" href="" target="_blank" rel="noopener">Googleマップで場所を見る ↗</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// 本物の店舗写真・料理写真の画像パス
+const shops=[
+  {
+    id: 1,
+    name:"おぐら 本店",
+    cat:"チキン南蛮",
+    area:"宮崎市橘通東",
+    food:"チキン南蛮",
+    img:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Chicken_nanban_001.jpg",
+    query:"おぐら本店 宮崎市",
+    desc:"秘伝の甘酢とたっぷりの特製タルタルソースが絡み合う、チキン南蛮発祥の名店。ジューシーで柔らかい肉質が絶品です！ #おぐら本店 #チキン南蛮 #宮崎名物 #宮崎ランチ",
+    price:"￥1,000〜￥2,000",
+    hours:"11:00〜15:00 / 17:00〜20:30 (火曜定休)",
+    likes: 1840,
+    rating:"4.4"
+  },
+  {
+    id: 2,
+    name:"地鶏炭火焼 粋仙",
+    cat:"地鶏",
+    area:"JR宮崎駅周辺",
+    food:"みやざき地頭鶏 炭火焼",
+    img:"https://upload.wikimedia.org/wikipedia/commons/7/7a/Miyazaki_jidori_sumibiyaki.jpg",
+    query:"地鶏炭火焼 粋仙 宮崎市",
+    desc:"強力な炭火で一気に豪快に焼き上げる本場のみやざき地頭鶏！香ばしい炭の風味と噛むほどあふれる肉汁が本格焼酎と相性抜群。 #粋仙 #地鶏炭火焼 #地頭鶏 #宮崎居酒屋",
+    price:"￥3,000〜￥5,000",
+    hours:"17:00〜23:00 (不定休)",
+    rating:"4.5"
+  },
+  {
+    id: 3,
+    name:"ぐんけい本店 隠蔵",
+    cat:"地鶏",
+    area:"宮崎市中心部",
+    food:"地頭鶏 プレミアム炭火焼",
+    img:"https://upload.wikimedia.org/wikipedia/commons/0/05/Miyazaki_jidori_tataki.jpg",
+    query:"ぐんけい本店隠蔵 宮崎市",
+    desc:"自社ファーム直送の新鮮なみやざき地頭鶏を使用。炭火焼きはもちろん、新鮮だからこそ味わえる地鶏のタタキや刺身も絶品です。 #ぐんけい隠蔵 #地鶏刺身 #宮崎ディナー",
+    price:"￥3,000〜￥5,000",
+    hours:"17:00〜23:00 (月曜定休)",
+    rating:"4.3"
+  },
+  {
+    id: 4,
+    name:"橘通りミヤチク APAS",
+    cat:"宮崎牛",
+    area:"宮崎市橘通西",
+    food:"宮崎牛 ロースステーキ",
+    img:"https://upload.wikimedia.org/wikipedia/commons/0/0b/Miyazaki_wagyu_beef_steak.jpg",
+    query:"橘通りミヤチクAPAS 宮崎市",
+    desc:"日本一の宮崎牛を目の前の鉄板焼きで贅沢に。綺麗なサシが入ったお肉は口の中でとろける極上の味わい。特別な日のディナーに。 #ミヤチク #宮崎牛 #鉄板焼き #宮崎ステーキ",
+    price:"￥5,000〜￥12,000",
+    hours:"11:30〜15:00 / 17:00〜21:30",
+    likes: 2150,
+    rating:"4.6"
+  },
+  {
+    id: 5,
+    name:"フルーツ大野",
+    cat:"カフェ",
+    area:"宮崎市橘通東",
+    food:"完熟宮崎マンゴーパフェ",
+    img:"https://upload.wikimedia.org/wikipedia/commons/1/13/Miyazaki_mango_parfait.jpg",
+    query:"フルーツ大野 宮崎市",
+    desc:"老舗フルーツ店直営のパーラー。最高級の完熟宮崎マンゴーを惜しみなく使った贅沢パフェ！甘みと香りが口いっぱいに広がります。 #フルーツ大野 #宮崎マンゴー #マンゴーパフェ",
+    price:"￥1,000〜￥2,500",
+    hours:"11:00〜22:00 (日曜定休)",
+    likes: 2480,
+    rating:"4.3"
+  }
+];
+
+let category = "all";
+let likedShops = new Set();
+const list = document.getElementById("shopList");
+const search = document.getElementById("search");
+
+const modalOverlay = document.getElementById("modalOverlay");
+const modalClose = document.getElementById("modalClose");
+const modalImg = document.getElementById("modalImg");
+const modalTitle = document.getElementById("modalTitle");
+const modalArea = document.getElementById("modalArea");
+const modalDesc = document.getElementById("modalDesc");
+const modalCat = document.getElementById("modalCat");
+const modalFood = document.getElementById("modalFood");
+const modalPrice = document.getElementById("modalPrice");
+const modalHours = document.getElementById("modalHours");
+const modalMapBtn = document.getElementById("modalMapBtn");
+
+function toggleLike(id, btn) {
+  if (likedShops.has(id)) {
+    likedShops.delete(id);
+    btn.classList.remove("liked");
+    btn.textContent = "♡";
+  } else {
+    likedShops.add(id);
+    btn.classList.add("liked");
+    btn.textContent = "♥";
+  }
+}
+
+function openModal(shopId) {
+  const shop = shops.find(s => s.id === shopId);
+  if(!shop) return;
+  
+  modalImg.src = shop.img;
+  modalTitle.textContent = shop.name;
+  modalArea.textContent = shop.area;
+  modalDesc.textContent = shop.desc;
+  modalCat.textContent = shop.cat;
+  modalFood.textContent = shop.food;
+  modalPrice.textContent = shop.price;
+  modalHours.textContent = shop.hours;
+  modalMapBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.query)}`;
+  
+  modalOverlay.classList.add("active");
+  modalClose.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  modalOverlay.classList.remove("active");
+  modalClose.style.display = "none";
+  document.body.style.overflow = "";
+}
+
+modalClose.addEventListener("click", closeModal);
+modalOverlay.addEventListener("click", (e) => {
+  if(e.target === modalOverlay) closeModal();
+});
+
+function render(){
+ const word = search.value.trim().toLowerCase();
+ const result = shops.filter(s =>
+  (category === "all" || s.cat === category) &&
+  (s.name + s.cat + s.area + s.food + s.desc).toLowerCase().includes(word)
+ );
+ 
+ list.innerHTML = result.length ? result.map(s => {
+  const isLiked = likedShops.has(s.id);
+  return `
+  <article class="post-card">
+   <div class="post-header">
+    <div class="post-user">
+     <div class="user-badge">
+      <div class="user-badge-inner">📍</div>
+     </div>
+     <div class="user-info">
+      <span class="username">${s.name}</span>
+      <span class="location-name">${s.area}</span>
+     </div>
+    </div>
+   </div>
+   
+   <div class="post-img-wrap" onclick="openModal(${s.id})">
+    <img src="${s.img}" alt="${s.name}" loading="lazy">
+   </div>
+   
+   <div class="post-actions">
+    <div class="action-btns">
+     <button class="icon-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${s.id}, this)">${isLiked ? '♥' : '♡'}</button>
+     <button class="icon-btn" onclick="openModal(${s.id})">💬</button>
+     <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.query)}" target="_blank" class="icon-btn" style="text-decoration:none;">✈️</a>
+    </div>
+    <span style="font-size:12px; font-weight:bold; color:var(--insta-pink);">★ ${s.rating}</span>
+   </div>
+   
+   <div class="post-body">
+    <div class="likes-count">「いいね！」${(s.likes + (isLiked ? 1 : 0)).toLocaleString()}件</div>
+    <div class="caption">
+     <strong>${s.name}</strong> ${s.desc}
+    </div>
+    <button class="comments-link" onclick="openModal(${s.id})">店舗詳細・営業時間を見る</button>
+   </div>
+  </article>
+  `;
+ }).join("") : '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">該当する投稿がありません。</p>';
+}
+
+document.querySelectorAll(".story-item").forEach(button => {
+ button.addEventListener("click", () => {
+  category = button.dataset.cat;
+  document.querySelectorAll(".story-item").forEach(b => b.classList.toggle("active", b === button));
+  render();
+ });
+});
+
+search.addEventListener("input", render);
+render();
+</script>
+</body>
+</html>
